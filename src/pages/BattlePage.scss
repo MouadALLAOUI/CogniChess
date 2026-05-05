@@ -1,0 +1,356 @@
+.battle-page {
+  min-height: 100vh;
+  background-color: $bg-primary;
+  color: $text-primary;
+  padding: $space-lg;
+
+  .battle-header {
+    text-align: center;
+    margin-bottom: $space-lg;
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: $space-xs;
+      color: $accent-gold;
+    }
+
+    p {
+      color: $text-muted;
+      font-size: 0.9rem;
+    }
+  }
+
+  .battle-setup {
+    max-width: 800px;
+    margin: 0 auto $space-lg;
+    background: $bg-sidebar;
+    border-radius: $radius-lg;
+    padding: $space-lg;
+    border: 1px solid $border-color;
+
+    .battle-form {
+      display: grid;
+      gap: $space-md;
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: $space-xs;
+
+        label {
+          font-size: 0.85rem;
+          color: $text-secondary;
+          font-weight: 600;
+        }
+
+        select, input {
+          padding: $space-sm;
+          border-radius: $radius-md;
+          border: 1px solid $border-color;
+          background: $bg-input;
+          color: $text-primary;
+          font-size: 0.9rem;
+
+          &:focus {
+            outline: none;
+            border-color: $accent-green;
+          }
+        }
+      }
+
+      .bot-selection {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: $space-md;
+
+        .bot-select-card {
+          background: $bg-card;
+          padding: $space-md;
+          border-radius: $radius-md;
+          border: 1px solid $border-color;
+
+          h3 {
+            font-size: 0.9rem;
+            margin-bottom: $space-sm;
+            color: $text-secondary;
+          }
+        }
+      }
+    }
+
+    .battle-actions {
+      display: flex;
+      gap: $space-sm;
+      justify-content: center;
+      margin-top: $space-md;
+
+      button {
+        padding: $space-sm $space-lg;
+        border-radius: $radius-md;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &.start-btn {
+          background: $accent-green;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: adjust-color($accent-green, $lightness: -10%);
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+
+        &.cancel-btn {
+          background: $danger;
+          color: white;
+
+          &:hover {
+            background: adjust-color($danger, $lightness: -10%);
+          }
+        }
+      }
+    }
+  }
+
+  .battle-progress {
+    max-width: 900px;
+    margin: 0 auto;
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $space-md;
+      padding: $space-md;
+      background: $bg-sidebar;
+      border-radius: $radius-md;
+      border: 1px solid $border-color;
+
+      .game-counter {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: $accent-gold;
+      }
+
+      .move-counter {
+        color: $text-muted;
+        font-size: 0.9rem;
+      }
+    }
+
+    .battle-board-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: $space-md;
+      margin-bottom: $space-md;
+
+      .battle-board-wrapper {
+        background: $bg-sidebar;
+        padding: $space-md;
+        border-radius: $radius-lg;
+        border: 1px solid $border-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .battle-status {
+          text-align: center;
+          color: $text-muted;
+
+          .status-icon {
+            font-size: 3rem;
+            margin-bottom: $space-sm;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+        }
+      }
+
+      .battle-stats {
+        background: $bg-sidebar;
+        padding: $space-md;
+        border-radius: $radius-lg;
+        border: 1px solid $border-color;
+
+        h3 {
+          font-size: 0.95rem;
+          margin-bottom: $space-md;
+          color: $text-secondary;
+          border-bottom: 1px solid $border-color;
+          padding-bottom: $space-sm;
+        }
+
+        .stat-row {
+          display: flex;
+          justify-content: space-between;
+          padding: $space-xs 0;
+          font-size: 0.85rem;
+
+          .stat-label {
+            color: $text-muted;
+          }
+
+          .stat-value {
+            color: $text-primary;
+            font-weight: 600;
+          }
+        }
+
+        .analysis-log {
+          margin-top: $space-md;
+          max-height: 200px;
+          overflow-y: auto;
+          font-family: $font-mono;
+          font-size: 0.75rem;
+          background: $bg-modal;
+          padding: $space-sm;
+          border-radius: $radius-md;
+
+          .log-entry {
+            padding: $space-xs 0;
+            border-bottom: 1px solid $border-color;
+            color: $text-secondary;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            &.blunder {
+              color: $danger;
+            }
+
+            &.brilliant {
+              color: $accent-gold;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .battle-results {
+    max-width: 800px;
+    margin: 0 auto;
+    background: $bg-sidebar;
+    border-radius: $radius-lg;
+    padding: $space-lg;
+    border: 1px solid $border-color;
+
+    .results-header {
+      text-align: center;
+      margin-bottom: $space-lg;
+
+      h2 {
+        font-size: 1.5rem;
+        color: $accent-gold;
+        margin-bottom: $space-xs;
+      }
+
+      .tournament-summary {
+        color: $text-muted;
+        font-size: 0.9rem;
+      }
+    }
+
+    .standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: $space-lg;
+
+      th, td {
+        padding: $space-sm $space-md;
+        text-align: left;
+        border-bottom: 1px solid $border-color;
+      }
+
+      th {
+        background: $bg-card;
+        color: $text-secondary;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .rank-cell {
+        font-weight: 700;
+        color: $accent-gold;
+      }
+
+      .bot-name-cell {
+        font-weight: 600;
+        color: $text-primary;
+      }
+
+      .stats-cell {
+        color: $text-muted;
+        font-size: 0.85rem;
+      }
+
+      .points-cell {
+        font-weight: 700;
+        color: $accent-green;
+        font-size: 1.1rem;
+      }
+    }
+
+    .results-actions {
+      display: flex;
+      gap: $space-sm;
+      justify-content: center;
+
+      button {
+        padding: $space-sm $space-lg;
+        border-radius: $radius-md;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: $transition-base;
+
+        &.new-battle-btn {
+          background: $accent-green;
+          color: white;
+
+          &:hover {
+            background: adjust-color($accent-green, $lightness: -10%);
+          }
+        }
+
+        &.export-btn {
+          background: $accent-blue;
+          color: white;
+
+          &:hover {
+            background: adjust-color($accent-blue, $lightness: -10%);
+          }
+        }
+
+        &.back-btn {
+          background: $bg-button;
+          color: $text-primary;
+
+          &:hover {
+            background: $bg-hover;
+          }
+        }
+      }
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+}

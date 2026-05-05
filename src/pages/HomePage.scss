@@ -3,11 +3,39 @@
   min-height: calc(100vh - 64px);
 
   &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: $space-xl;
     
     .section-title {
       font-size: 2rem;
       color: $text-primary;
+    }
+
+    .battle-btn {
+      display: flex;
+      align-items: center;
+      gap: $space-sm;
+      padding: $space-sm $space-md;
+      background: linear-gradient(135deg, $accent-blue, adjust-color($accent-blue, $lightness: -10%));
+      border: none;
+      border-radius: $radius-md;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: $transition-base;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($accent-blue, 0.4);
+      }
     }
   }
 

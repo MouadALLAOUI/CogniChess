@@ -87,7 +87,7 @@
 
   .control-btn.annotate {
     &.active {
-      background: linear-gradient(135deg, $accent-blue, darken($accent-blue, 10%));
+      background: linear-gradient(135deg, $accent-blue, adjust-color($accent-blue, $lightness: -10%));
       box-shadow: 0 2px 8px rgba($accent-blue, 0.4);
     }
   }
