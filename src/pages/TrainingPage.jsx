@@ -6,9 +6,14 @@ import CapturedPieces from '../components/game/CapturedPieces';
 import GameControls from '../components/game/GameControls';
 import PromotionModal from '../components/board/PromotionModal';
 import GameOverModal from '../components/game/GameOverModal';
+import GameAnalysisModal from '../components/game/GameAnalysisModal';
+import BlunderToast from '../components/game/BlunderToast';
 import PGNModal from '../components/game/PGNModal';
 import CloneInsight from '../components/clone/CloneInsight';
 import CloneProgress from '../components/clone/CloneProgress';
+import StyleDNA from '../components/clone/StyleDNA';
+import ParticleEffects from '../components/effects/ParticleEffects';
+import BoardAnnotations from '../components/board/BoardAnnotations';
 import { useChessGame } from '../hooks/useChessGame';
 import { useCloneBot } from '../hooks/useCloneBot';
 import { recordMove } from '../clone/learnFromGame';
@@ -20,6 +25,8 @@ import { getGamePhase } from '../engine/gamePhase';
 import { coordsToSquare } from '../engine/algebraicNotation';
 import { exportToPGN, downloadPGN } from '../utils/pgnManager';
 import { useTheme } from '../hooks/useTheme';
+import { detectBlunder } from '../clone/blunderDetector';
+import { computeAccuracy, findBestMove, findBiggestMistake, generateHeatmapData } from '../utils/gameAnalysis';
 import './TrainingPage.scss';
 
 const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) => {
@@ -44,8 +51,18 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
 
   const [isFlipped, setIsFlipped] = useState(playerColor === 'b');
   const [isPGNModalOpen, setIsPGNModalOpen] = useState(false);
+  const [blunder, setBlunder] = useState(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [gameAnalysis, setGameAnalysis] = useState(null);
+  const [annotationMode, setAnnotationMode] = useState(null);
+  const [lastRecordedMoveKey, setLastRecordedMoveKey] = useState(null);
+  const [cloneRecommendedMove, setCloneRecommendedMove] = useState(null);
+  const [captureEffect, setCaptureEffect] = useState({ show: false, position: null });
+  const [showCinematic, setShowCinematic] = useState(false);
+  
   const lastRecordedMoveRef = useRef(null);
   const gameCompletedRef = useRef(false);
+  const boardRef = useRef(null);
   const { boardTheme, pieceTheme } = useTheme(settings, onSettingsChange);
 
   // Sync flip state with player color changes
@@ -66,14 +83,37 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
     playerColor
   );
 
-  // Effect to handle learning when player moves (opposite of bot turn)
+  // Store clone's recommended move for blunder detection
   useEffect(() => {
-    if (turn !== playerColor && lastMove && !lastMove.isBot) {
-      // Player just moved, now bot's turn starts
+    if (lastBotDecision?.move) {
+      setCloneRecommendedMove(lastBotDecision.move);
+    }
+  }, [lastBotDecision]);
+
+  // Blunder detection after player moves
+  useEffect(() => {
+    if (turn !== playerColor && lastMove && !lastMove.isBot && cloneRecommendedMove) {
       const moveKey = `${lastMove.from}-${lastMove.to}-${history.length}`;
       if (lastRecordedMoveRef.current === moveKey) return;
       lastRecordedMoveRef.current = moveKey;
 
+      // Detect blunder
+      const positionMemory = bot.cloneData?.positionMemory || {};
+      const styleProfile = bot.cloneData?.styleProfile || {};
+      
+      const blunderResult = detectBlunder(
+        lastMove,
+        cloneRecommendedMove,
+        positionMemory,
+        styleProfile,
+        board
+      );
+
+      if (blunderResult) {
+        setBlunder(blunderResult);
+      }
+
+      // Learning logic
       const moveData = {
         moveNumber: Math.ceil(history.length / 2),
         phase: getGamePhase(board, Math.ceil(history.length / 2)),
@@ -119,11 +159,74 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
     }
   }, [gameStatus, bot, onUpdateBot, turn]);
 
+  // Game analysis on game end
+  useEffect(() => {
+    if ((gameStatus === 'checkmate' || gameStatus === 'stalemate') && !showAnalysis) {
+      const accuracy = computeAccuracy(history, gameStatus === 'checkmate' ? (turn !== playerColor ? 'win' : 'loss') : 'draw');
+      const bestMove = findBestMove(history);
+      const biggestMistake = findBiggestMistake(history);
+      const heatmap = generateHeatmapData(history, playerColor);
+
+      setGameAnalysis({
+        accuracy,
+        bestMove,
+        biggestMistake,
+        heatmap
+      });
+      
+      // Trigger cinematic effect for checkmate
+      if (gameStatus === 'checkmate') {
+        setShowCinematic(true);
+        setTimeout(() => {
+          setShowAnalysis(true);
+        }, 2000);
+      } else {
+        setShowAnalysis(true);
+      }
+    }
+
+    if (gameStatus === 'active') {
+      setShowAnalysis(false);
+      setShowCinematic(false);
+      gameCompletedRef.current = false;
+    }
+  }, [gameStatus, history, playerColor, turn]);
+
+  // Capture effect detection
+  useEffect(() => {
+    if (lastMove && lastMove.capturedPiece) {
+      const [toR, toC] = lastMove.to;
+      const squareSize = 600 / 8; // Assuming 600px board
+      setCaptureEffect({
+        show: true,
+        position: {
+          x: toC * squareSize + squareSize / 2,
+          y: toR * squareSize + squareSize / 2
+        }
+      });
+
+      setTimeout(() => {
+        setCaptureEffect({ show: false, position: null });
+      }, 400);
+    }
+  }, [lastMove]);
+
   const handleSquareClick = (r, c, move) => {
     if (move) {
       executeMove(move);
     } else {
       selectPiece(r, c);
+    }
+  };
+
+  const handleShowRecommendedMove = (recommendedMove) => {
+    // Highlight the recommended move square
+    const square = document.querySelector(`[data-square="${recommendedMove.to[0]}-${recommendedMove.to[1]}"]`);
+    if (square) {
+      square.classList.add('recommended-move');
+      setTimeout(() => {
+        square.classList.remove('recommended-move');
+      }, 2000);
     }
   };
 
@@ -194,6 +297,20 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         onHome={onBack}
       />
 
+      <GameAnalysisModal
+        isOpen={showAnalysis}
+        analysis={gameAnalysis}
+        onClose={() => setShowAnalysis(false)}
+        onRestart={resetGame}
+        onHome={onBack}
+      />
+
+      <BlunderToast
+        blunder={blunder}
+        onShow={handleShowRecommendedMove}
+        onClose={() => setBlunder(null)}
+      />
+
       <PGNModal
         isOpen={isPGNModalOpen}
         onClose={() => setIsPGNModalOpen(false)}
@@ -205,6 +322,18 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
           return true;
         }}
       />
+
+      {/* Particle Effects */}
+      <ParticleEffects
+        showCaptureSparkles={captureEffect.show}
+        capturePosition={captureEffect.position}
+        showKingGlow={gameStatus === 'check'}
+        showConfetti={gameStatus === 'checkmate'}
+        effectsEnabled={settings.effectsEnabled !== false}
+      />
+
+      {/* Cinematic Overlay */}
+      <div className={`cinematic-overlay ${showCinematic ? 'active' : ''}`} />
     </div>
   );
 };

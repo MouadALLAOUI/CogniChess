@@ -1,0 +1,110 @@
+.capture-sparkle {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  animation: sparkle-fly 0.4s ease-out forwards;
+}
+
+@keyframes sparkle-fly {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0);
+  }
+}
+
+.king-glow-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  animation: king-glow-pulse 1s ease-in-out infinite;
+}
+
+.square.in-check .piece {
+  animation: piece-shake 0.5s ease-in-out;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8)) 
+          drop-shadow(0 0 20px rgba(255, 0, 0, 0.6))
+          drop-shadow(0 0 30px rgba(255, 0, 0, 0.4));
+}
+
+@keyframes king-glow-pulse {
+  0%, 100% {
+    box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: inset 0 0 40px rgba(255, 0, 0, 0.5);
+  }
+}
+
+@keyframes piece-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px) rotate(-5deg);
+  }
+  75% {
+    transform: translateX(3px) rotate(5deg);
+  }
+}
+
+/* Recommended move highlight pulse */
+.square.recommended-move {
+  animation: recommended-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes recommended-pulse {
+  0%, 100% {
+    box-shadow: inset 0 0 0 3px rgba(76, 175, 80, 0.8);
+  }
+  50% {
+    box-shadow: inset 0 0 0 8px rgba(76, 175, 80, 0.4);
+  }
+}
+
+/* Cinematic zoom effect */
+.board-container.cinematic-zoom {
+  animation: cinematic-zoom-in 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes cinematic-zoom-in {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.15);
+  }
+}
+
+.cinematic-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+.cinematic-overlay.active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capture-sparkle,
+  .king-glow-overlay,
+  .square.in-check .piece,
+  .square.recommended-move,
+  .board-container.cinematic-zoom {
+    animation: none !important;
+  }
+}

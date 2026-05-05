@@ -28,12 +28,12 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
 
   // Initialize sound manager on first open
   React.useEffect(() => {
-    if (isOpen) {
-      soundManager.init();
-      soundManager.setEnabled(settings.soundEnabled);
-      soundManager.setVolume(settings.soundVolume);
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+    
+    soundManager.init();
+    soundManager.setEnabled(settings.soundEnabled);
+    soundManager.setVolume(settings.soundVolume);
+  }, [isOpen, settings.soundEnabled, settings.soundVolume]);
 
   return (
     <div className="modal-overlay animate-fade-in">
