@@ -3,7 +3,6 @@
  * Basic chess AI opponent for CogniChess
  */
 
-import { evaluateBoard } from './evaluation.js';
 import { generateAllMoves, makeMove } from './chessRules.js';
 import { getGameState } from './moveValidator.js';
 import { transpositionTable } from './transpositionTable.js';
@@ -72,6 +71,9 @@ export function evaluatePosition(board, color) {
   
   return score;
 }
+
+// Alias for backward compatibility
+export const evaluateBoard = evaluatePosition;
 
 /**
  * Minimax with Alpha-Beta pruning
