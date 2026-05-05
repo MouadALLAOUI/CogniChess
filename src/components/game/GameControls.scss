@@ -84,3 +84,57 @@
     }
   }
 }
+
+  .control-btn.annotate {
+    &.active {
+      background: linear-gradient(135deg, $accent-blue, darken($accent-blue, 10%));
+      box-shadow: 0 2px 8px rgba($accent-blue, 0.4);
+    }
+  }
+
+  .annotation-mode-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    background: $bg-panel;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    overflow: hidden;
+    min-width: 140px;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      color: $text-primary;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      &.active {
+        background: rgba($accent-blue, 0.3);
+        color: $accent-blue;
+      }
+
+      &.annotation-close {
+        border-top: 1px solid $border-color;
+        color: $accent-red;
+
+        &:hover {
+          background: rgba($accent-red, 0.2);
+        }
+      }
+    }
+  }

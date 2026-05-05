@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Board from '../components/board/Board';
-import Sidebar from '../components/layout/Sidebar';
 import MoveHistory from '../components/game/MoveHistory';
 import CapturedPieces from '../components/game/CapturedPieces';
 import GameControls from '../components/game/GameControls';
@@ -23,7 +22,7 @@ import { buildPositionMemory } from '../clone/positionMemory';
 import { boardToFen } from '../engine/fenParser';
 import { getGamePhase } from '../engine/gamePhase';
 import { coordsToSquare } from '../engine/algebraicNotation';
-import { exportToPGN, downloadPGN } from '../utils/pgnManager';
+import { exportToPGN, downloadPGN, validatePGN, importFromPGN } from '../utils/pgnManager';
 import { useTheme } from '../hooks/useTheme';
 import { detectBlunder } from '../clone/blunderDetector';
 import { computeAccuracy, findBestMove, findBiggestMistake, generateHeatmapData } from '../utils/gameAnalysis';
@@ -55,6 +54,7 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [gameAnalysis, setGameAnalysis] = useState(null);
   const [annotationMode, setAnnotationMode] = useState(null);
+  const [annotations, setAnnotations] = useState({ arrows: [], circles: [] });
   const [lastRecordedMoveKey, setLastRecordedMoveKey] = useState(null);
   const [cloneRecommendedMove, setCloneRecommendedMove] = useState(null);
   const [captureEffect, setCaptureEffect] = useState({ show: false, position: null });
@@ -258,12 +258,27 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
             isFlipped={isFlipped}
             showCoordinates={settings.showCoordinates}
             moveArrow={lastMove ? { from: lastMove.from, to: lastMove.to } : null}
+            ref={boardRef}
+          />
+          
+          {/* Board Annotations Overlay */}
+          <BoardAnnotations
+            boardRef={boardRef}
+            isActive={annotationMode !== null}
+            mode={annotationMode}
+            onAnnotationsChange={(newAnnotations) => setAnnotations(newAnnotations)}
           />
         </div>
 
         <aside className="game-sidebar">
           <div className="sidebar-top">
             <CloneProgress gamesPlayed={bot.gamesPlayed} />
+          </div>
+          <div className="sidebar-top">
+            <StyleDNA 
+              styleProfile={bot.cloneData?.styleProfile || {}} 
+              gamesPlayed={bot.gamesPlayed} 
+            />
           </div>
           <div className="sidebar-top">
             <CapturedPieces captured={capturedPieces} />
@@ -278,6 +293,8 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
               onExportPGN={() => setIsPGNModalOpen(true)}
+              onToggleAnnotation={(mode) => setAnnotationMode(mode)}
+              annotationMode={annotationMode}
             />
           </div>
         </aside>
@@ -317,9 +334,15 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         pgnData={exportToPGN(history, gameStatus, 'Player', bot?.name || 'Bot')}
         onExport={() => downloadPGN(exportToPGN(history, gameStatus, 'Player', bot?.name || 'Bot'))}
         onImport={(pgnText) => {
-          // Import logic can be added here
-          console.log('Import PGN:', pgnText);
-          return true;
+          const validation = validatePGN(pgnText);
+          if (validation.valid) {
+            const imported = importFromPGN(pgnText);
+            console.log('Imported PGN:', imported);
+            return true;
+          } else {
+            console.error('Invalid PGN:', validation.error);
+            return false;
+          }
         }}
       />
 
