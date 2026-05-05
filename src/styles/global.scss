@@ -40,3 +40,29 @@ a {
   margin: 0 auto;
   padding: 0 $space-md;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  // Ensure no parent constraints
+  isolation: isolate;
+}
+
+.modal-content {
+  background: $bg-modal;
+  border-radius: $radius-lg;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: $space-lg;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}

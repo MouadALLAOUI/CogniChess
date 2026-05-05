@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck, faVolumeHigh, faVolumeXmark, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../../hooks/useTheme';
@@ -6,9 +6,17 @@ import soundManager from '../../utils/soundManager';
 import './SettingsModal.scss';
 
 const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot }) => {
+  // ✅ All hooks are called at the top level, unconditionally.
   const { allBoards, allPieces, boardTheme, pieceTheme, setBoardTheme, setPieceTheme } = useTheme(settings, onSettingsChange);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    // This effect should only run when isOpen is true, but the hook itself is always called.
+    if (isOpen) {
+      soundManager.init();
+      soundManager.setEnabled(settings.soundEnabled);
+      soundManager.setVolume(settings.soundVolume);
+    }
+  }, [isOpen, settings.soundEnabled, settings.soundVolume]);
 
   const updateSetting = (key, value) => {
     onSettingsChange(prev => ({ ...prev, [key]: value }));
@@ -27,17 +35,12 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
   };
 
   // Initialize sound manager on first open
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    soundManager.init();
-    soundManager.setEnabled(settings.soundEnabled);
-    soundManager.setVolume(settings.soundVolume);
-  }, [isOpen, settings.soundEnabled, settings.soundVolume]);
+  // ✅ The conditional return for rendering logic is now safe, as it comes after all hooks.
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay animate-fade-in">
-      <div className="settings-modal animate-slide-up">
+      <div className="settings-modal modal-content animate-slide-up">
         <header className="modal-header">
           <h3>Settings</h3>
           <button className="close-btn" onClick={onClose}>
@@ -50,17 +53,17 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
             <h4>Board Theme</h4>
             <div className="theme-grid">
               {allBoards.map(theme => (
-                <div 
-                  key={theme.id} 
+                <div
+                  key={theme.id}
                   className={`theme-card ${settings.boardTheme === theme.id ? 'active' : ''}`}
                   onClick={() => setBoardTheme(theme.id)}
                 >
                   <div className="preview-board">
                     {[0, 1, 2, 3].map(i => (
-                      <div 
-                        key={i} 
-                        className="sq" 
-                        style={{ backgroundColor: (i + Math.floor(i/2)) % 2 === 0 ? theme.light : theme.dark }}
+                      <div
+                        key={i}
+                        className="sq"
+                        style={{ backgroundColor: (i + Math.floor(i / 2)) % 2 === 0 ? theme.light : theme.dark }}
                       ></div>
                     ))}
                   </div>
@@ -75,8 +78,8 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
             <h4>Piece Theme</h4>
             <div className="theme-grid">
               {allPieces.map(theme => (
-                <div 
-                  key={theme.id} 
+                <div
+                  key={theme.id}
                   className={`theme-card ${settings.pieceTheme === theme.id ? 'active' : ''}`}
                   onClick={() => setPieceTheme(theme.id)}
                 >
@@ -97,7 +100,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
                 <FontAwesomeIcon icon={settings.soundEnabled ? faVolumeHigh : faVolumeXmark} />
                 <span>Sound Effects</span>
               </div>
-              <button 
+              <button
                 className={`toggle-btn ${settings.soundEnabled ? 'on' : 'off'}`}
                 onClick={() => {
                   const newValue = !settings.soundEnabled;
@@ -108,7 +111,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
                 <div className="toggle-thumb"></div>
               </button>
             </div>
-            
+
             <div className="setting-row volume-control">
               <label htmlFor="volume-slider">Volume</label>
               <input
@@ -130,7 +133,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
               <div className="label-with-icon">
                 <span>Show Board Coordinates</span>
               </div>
-              <button 
+              <button
                 className={`toggle-btn ${settings.showCoordinates ? 'on' : 'off'}`}
                 onClick={() => updateSetting('showCoordinates', !settings.showCoordinates)}
               >

@@ -34,7 +34,7 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
     gameMode
   } = useChessGame();
 
-  const isFlipped = playerColor === 'b';
+  const [isFlipped, setIsFlipped] = useState(playerColor === 'b');
   const gameCompletedRef = useRef(false);
   const { boardTheme, pieceTheme } = useTheme(settings, onSettingsChange);
 
@@ -132,10 +132,10 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
             />
-            <PGNModal 
-              history={history} 
-              playerColor={playerColor} 
-              bot={bot} 
+            <PGNModal
+              history={history}
+              playerColor={playerColor}
+              bot={bot}
             />
           </div>
         </aside>
