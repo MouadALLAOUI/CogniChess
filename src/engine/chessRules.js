@@ -180,19 +180,70 @@ const getKingMoves = (board, r, c, color, gameState, moves) => {
 
 /**
  * Checks if a square is attacked by any piece of the given color.
+ * OPTIMIZATION: Manual calculation to avoid infinite recursion with King moves.
  */
-const isSquareAttacked = (board, r, c, attackerColor, gameState) => {
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      const piece = board[i][j];
-      if (piece && piece[0] === attackerColor) {
-        const moves = getPseudoLegalMoves(board, i, j, gameState);
-        if (moves.some(m => m.to[0] === r && m.to[1] === c)) {
-          return true;
-        }
-      }
+const isSquareAttacked = (board, r, c, attackerColor) => {
+  // 1. Check Pawn Attacks
+  // Attacker is White: looks for pawns at [r+1][c-1] and [r+1][c+1] (below the square)
+  // Attacker is Black: looks for pawns at [r-1][c-1] and [r-1][c+1] (above the square)
+  const attackRowOffset = attackerColor === COLORS.WHITE ? 1 : -1;
+  
+  if (isWithinBoard(r + attackRowOffset, c - 1)) {
+    const piece = board[r + attackRowOffset][c - 1];
+    if (piece && piece === attackerColor + 'P') return true;
+  }
+  if (isWithinBoard(r + attackRowOffset, c + 1)) {
+    const piece = board[r + attackRowOffset][c + 1];
+    if (piece && piece === attackerColor + 'P') return true;
+  }
+
+  // 2. Check Knight Attacks
+  const knightMoves = [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]];
+  for (const [dr, dc] of knightMoves) {
+    const nr = r + dr, nc = c + dc;
+    if (isWithinBoard(nr, nc)) {
+      const piece = board[nr][nc];
+      if (piece && piece === attackerColor + 'N') return true;
     }
   }
+
+  // 3. Check King Attacks (for adjacent kings)
+  const kingMoves = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+  for (const [dr, dc] of kingMoves) {
+    const nr = r + dr, nc = c + dc;
+    if (isWithinBoard(nr, nc)) {
+      const piece = board[nr][nc];
+      if (piece && piece === attackerColor + 'K') return true;
+    }
+  }
+
+  // 4. Check Sliding Pieces (Rook, Bishop, Queen)
+  const directions = [
+    { dr: -1, dc: 0, types: ['R', 'Q'] }, // Up
+    { dr: 1, dc: 0, types: ['R', 'Q'] },  // Down
+    { dr: 0, dc: -1, types: ['R', 'Q'] }, // Left
+    { dr: 0, dc: 1, types: ['R', 'Q'] },  // Right
+    { dr: -1, dc: -1, types: ['B', 'Q'] }, // Up-Left
+    { dr: -1, dc: 1, types: ['B', 'Q'] },  // Up-Right
+    { dr: 1, dc: -1, types: ['B', 'Q'] },  // Down-Left
+    { dr: 1, dc: 1, types: ['B', 'Q'] }    // Down-Right
+  ];
+
+  for (const { dr, dc, types } of directions) {
+    let nr = r + dr, nc = c + dc;
+    while (isWithinBoard(nr, nc)) {
+      const piece = board[nr][nc];
+      if (piece) {
+        if (piece[0] === attackerColor && types.includes(piece[1])) {
+          return true;
+        }
+        break; // Blocked by any piece
+      }
+      nr += dr;
+      nc += dc;
+    }
+  }
+
   return false;
 };
 

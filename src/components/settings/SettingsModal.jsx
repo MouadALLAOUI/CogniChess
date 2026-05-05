@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck, faVolumeHigh, faVolumeXmark, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../../hooks/useTheme';
@@ -27,7 +27,7 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
   };
 
   // Initialize sound manager on first open
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) return;
     
     soundManager.init();

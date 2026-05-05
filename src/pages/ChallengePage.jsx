@@ -132,7 +132,7 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
             />
-            <PGNExport 
+            <PGNModal 
               history={history} 
               playerColor={playerColor} 
               bot={bot} 
