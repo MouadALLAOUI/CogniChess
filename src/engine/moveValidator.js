@@ -53,6 +53,8 @@ export const simulateMove = (board, move) => {
   const [toR, toC] = move.to;
   const piece = newBoard[fromR][fromC];
 
+  if (!piece) return newBoard; // Guard clause for null piece
+
   newBoard[toR][toC] = piece;
   newBoard[fromR][fromC] = null;
 
