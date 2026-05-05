@@ -1,4 +1,4 @@
-import { getLegalMoves } from '../engine/chessRules';
+import { getLegalMoves } from '../engine/moveValidator';
 import { simulateMove } from '../engine/moveValidator';
 
 /**
