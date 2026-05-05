@@ -1,38 +1,37 @@
-```gitignore
 # Dependencies
 node_modules/
 
-# Build artifacts
-dist/
-build/
-*.min.js
-*.min.css
-*.bundle.js
-
-# Logs
+# Logs and temp files
 *.log
+*.tmp
 
-# Environment
+# Environment variables
 .env
 .env.local
 *.env.*
 
-# Editors
+# Editor/IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
-.DS_Store
-Thumbs.db
+# Build artifacts
+dist/
+build/
+*.js.map
+*.jsx.map
 
-# Coverage
+# Coverage reports
 coverage/
 htmlcov/
 *.coverage
 
-# Python
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Python related (if applicable)
 __pycache__/
 *.pyc
 *.pyo
@@ -42,17 +41,7 @@ __pycache__/
 *.egg-info/
 .eggs/
 
-# Compiled
-*.class
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.out
-
-# Compressed
+# Compression files
 *.zip
 *.gz
 *.tar
@@ -75,4 +64,3 @@ __pycache__/
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```

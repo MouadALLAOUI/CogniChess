@@ -25,8 +25,8 @@ const PIECES = {
 };
 
 export const useTheme = (settings, onSettingsChange) => {
-  const boardTheme = useMemo(() => BOARDS[settings.boardTheme] || BOARDS.classic, [settings.boardTheme]);
-  const pieceTheme = useMemo(() => PIECES[settings.pieceTheme] || PIECES.wooden, [settings.pieceTheme]);
+  const boardTheme = useMemo(() => BOARDS[settings?.boardTheme || 'classic'] || BOARDS.classic, [settings?.boardTheme]);
+  const pieceTheme = useMemo(() => PIECES[settings?.pieceTheme || 'wooden'] || PIECES.wooden, [settings?.pieceTheme]);
 
   const setBoardTheme = (themeId) => {
     onSettingsChange(prev => ({ ...prev, boardTheme: themeId }));
