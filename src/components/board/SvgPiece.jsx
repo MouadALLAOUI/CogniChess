@@ -62,7 +62,8 @@ const SvgPiece = ({ type, theme = 'wooden', className = '' }) => {
 
     importFn()
       .then((module) => {
-        const Component = module.default;
+        // vite-plugin-svgr exports the component as ReactComponent named export
+        const Component = module.ReactComponent || module.default;
         componentCache.set(pieceKey, Component);
         setSvgComponent(Component);
       })
