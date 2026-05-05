@@ -1,0 +1,64 @@
+.clone-insight {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-md;
+  background-color: $bg-card;
+  border: 1px solid $border-color;
+  margin-bottom: $space-md;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $text-primary;
+
+  .insight-icon {
+    font-size: 1.2rem;
+    color: $accent-gold;
+  }
+
+  &.thinking {
+    background-color: rgba($accent-gold, 0.05);
+    border-color: rgba($accent-gold, 0.2);
+
+    .insight-icon {
+      color: $accent-gold;
+    }
+  }
+
+  &.memory {
+    background-color: rgba($accent-green, 0.05);
+    border-color: rgba($accent-green, 0.2);
+
+    .insight-icon {
+      color: $accent-green;
+    }
+  }
+
+  &.fuzzy-memory {
+    background-color: rgba($accent-green, 0.08);
+    border-color: rgba($accent-green, 0.3);
+    border-style: dashed;
+
+    .insight-icon {
+      color: $accent-green;
+    }
+  }
+
+  &.opening {
+    background-color: rgba($accent-gold, 0.05);
+    border-color: rgba($accent-gold, 0.2);
+
+    .insight-icon {
+      color: $accent-gold;
+    }
+  }
+
+  &.style {
+    background-color: rgba($text-primary, 0.05);
+    border-color: rgba($text-primary, 0.2);
+
+    .insight-icon {
+      color: $text-primary;
+    }
+  }
+}

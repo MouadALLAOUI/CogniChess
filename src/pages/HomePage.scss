@@ -1,0 +1,62 @@
+.home-page {
+  padding: $space-xl 0;
+  min-height: calc(100vh - 64px);
+
+  &__header {
+    margin-bottom: $space-xl;
+    
+    .section-title {
+      font-size: 2rem;
+      color: $text-primary;
+    }
+  }
+
+  .clone-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $space-lg;
+  }
+
+  .add-bot-card {
+    @include card-surface;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed $border-color;
+    background: transparent;
+    min-height: 240px;
+    
+    &:hover {
+      border-color: $accent-gold;
+      background-color: rgba($accent-gold, 0.05);
+
+      .plus-icon {
+        transform: scale(1.1);
+        color: $accent-gold;
+      }
+
+      span {
+        color: $text-primary;
+      }
+    }
+
+    &__content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $space-md;
+
+      .plus-icon {
+        font-size: 2.5rem;
+        color: $text-muted;
+        transition: $transition-base;
+      }
+
+      span {
+        font-weight: 500;
+        color: $text-muted;
+        transition: $transition-base;
+      }
+    }
+  }
+}

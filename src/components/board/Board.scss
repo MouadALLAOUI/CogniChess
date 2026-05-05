@@ -1,0 +1,141 @@
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $space-lg;
+  background-color: $bg-primary;
+}
+
+.chess-board {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  height: 600px;
+  border: 4px solid $bg-card;
+  border-radius: $radius-sm;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  position: relative;
+
+  @include mobile {
+    width: 90vw;
+    height: 90vw;
+  }
+}
+
+.board-row {
+  display: flex;
+  flex: 1;
+}
+
+.square {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color $transition-fast;
+
+  &.light {
+    background-color: $board-classic-light;
+
+    .label {
+      color: $board-classic-dark;
+    }
+
+    &.selected {
+      background-color: #bbc14d;
+    }
+
+    &.last-move {
+      background-color: #f5f682;
+    }
+
+    &.in-check {
+      background-color: #ff5e5e;
+    }
+  }
+
+  &.dark {
+    background-color: $board-classic-dark;
+
+    .label {
+      color: $board-classic-light;
+    }
+
+    &.selected {
+      background-color: #a3a635;
+    }
+
+    &.last-move {
+      background-color: #b9ca43;
+    }
+
+    &.in-check {
+      background-color: #d14949;
+    }
+  }
+
+  .legal-dot {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+
+    &.capture {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 0;
+    }
+  }
+
+  .label {
+    position: absolute;
+    font-size: 0.75rem;
+    font-weight: 600;
+    pointer-events: none;
+
+    &.rank {
+      top: 2px;
+      left: 2px;
+    }
+
+    &.file {
+      bottom: 2px;
+      right: 2px;
+    }
+  }
+
+  .piece {
+    font-size: 3.5rem;
+    line-height: 1;
+    z-index: 2;
+    transition: transform $transition-fast;
+
+    @include mobile {
+      font-size: 2.5rem;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &:hover {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+    }
+  }
+}

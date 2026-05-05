@@ -1,0 +1,62 @@
+.challenge-page {
+  height: calc(100vh - 64px);
+  background-color: $bg-primary;
+
+  .game-layout {
+    display: flex;
+    height: 100%;
+
+    .game-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: $space-lg;
+      position: relative;
+
+      .game-area-header {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $space-md;
+
+        .back-btn {
+          color: $text-muted;
+          font-size: 0.9rem;
+          &:hover { color: $text-primary; }
+        }
+
+        .challenge-info {
+          font-size: 0.9rem;
+          color: $text-muted;
+          strong { color: $accent-gold; }
+        }
+      }
+    }
+
+    .game-sidebar {
+      width: 320px;
+      background-color: $bg-sidebar;
+      border-left: 1px solid $border-color;
+      display: flex;
+      flex-direction: column;
+
+      .sidebar-top {
+        padding: $space-md;
+        border-bottom: 1px solid $border-color;
+      }
+
+      .sidebar-middle {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .sidebar-bottom {
+        // GameControls already has its own padding/border
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+.move-history {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: transparent;
+
+  .history-header {
+    padding: $space-md;
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: $text-primary;
+    border-bottom: 1px solid $border-color;
+
+    svg {
+      color: $accent-gold;
+    }
+  }
+
+  .history-list {
+    flex: 1;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    padding: $space-sm 0;
+
+    .move-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 1fr;
+      padding: $space-xs $space-md;
+      font-family: $font-mono;
+      font-size: 0.85rem;
+
+      &:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+
+      .move-number {
+        color: $text-muted;
+      }
+
+      .move-white, .move-black {
+        color: $text-primary;
+        font-weight: 500;
+      }
+    }
+  }
+}

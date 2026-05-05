@@ -1,0 +1,69 @@
+.navbar {
+  height: 64px;
+  background-color: $bg-sidebar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $space-lg;
+  border-bottom: 1px solid $border-color;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $accent-gold;
+    letter-spacing: -0.5px;
+  }
+
+  &__center {
+    .mode-toggle {
+      display: flex;
+      background-color: $bg-primary;
+      padding: $space-xs;
+      border-radius: $radius-lg;
+      border: 1px solid $border-color;
+
+      .mode-btn {
+        padding: $space-xs $space-lg;
+        border-radius: $radius-lg;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: $text-muted;
+
+        &.active {
+          background-color: $accent-green;
+          color: white;
+        }
+
+        &:hover:not(.active) {
+          color: $text-primary;
+        }
+      }
+    }
+  }
+
+  &__right {
+    .bot-info {
+      display: flex;
+      align-items: center;
+      gap: $space-md;
+
+      .bot-name {
+        font-weight: 500;
+        color: $text-primary;
+      }
+
+      .settings-btn {
+        color: $text-muted;
+        font-size: 1.2rem;
+        
+        &:hover {
+          color: $accent-gold;
+          transform: rotate(30deg);
+        }
+      }
+    }
+  }
+}

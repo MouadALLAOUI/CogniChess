@@ -1,0 +1,53 @@
+.clone-progress {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+  background-color: $bg-card;
+  border-radius: $radius-md;
+  border: 1px solid $border-color;
+
+  .milestone-current {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    
+    .milestone-icon {
+      font-size: 1.5rem;
+      color: $accent-gold;
+    }
+
+    .milestone-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-primary;
+    }
+  }
+
+  .progress-steps {
+    display: flex;
+    gap: $space-xs;
+    height: 4px;
+
+    .step {
+      flex: 1;
+      background-color: $bg-primary;
+      border-radius: $radius-sm;
+      transition: background-color 0.5s ease;
+
+      &.active {
+        background-color: $accent-green;
+      }
+    }
+  }
+
+  .games-count {
+    font-size: 0.8rem;
+    color: $text-muted;
+    text-align: right;
+
+    strong {
+      color: $text-primary;
+    }
+  }
+}

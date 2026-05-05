@@ -1,0 +1,45 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $bg-primary;
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 64px);
+
+    .game-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $bg-primary;
+      padding: $space-lg;
+    }
+  }
+
+  .view-toggle-debug {
+    position: fixed;
+    bottom: $space-lg;
+    left: $space-lg;
+    background-color: rgba($accent-gold, 0.2);
+    color: $accent-gold;
+    padding: $space-sm $space-md;
+    border: 1px solid $accent-gold;
+    border-radius: $radius-sm;
+    font-size: 0.8rem;
+    z-index: 2000;
+
+    &:hover {
+      background-color: $accent-gold;
+      color: white;
+    }
+  }
+}

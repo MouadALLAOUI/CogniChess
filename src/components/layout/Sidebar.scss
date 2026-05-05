@@ -1,0 +1,106 @@
+.sidebar {
+  width: 320px;
+  background-color: $bg-sidebar;
+  border-left: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  @include custom-scrollbar;
+
+  &__section {
+    border-bottom: 1px solid $border-color;
+
+    .section-header {
+      padding: $space-md;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        gap: $space-sm;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: $text-primary;
+
+        .icon {
+          color: $accent-gold;
+        }
+      }
+
+      svg {
+        font-size: 0.8rem;
+        color: $text-muted;
+      }
+    }
+
+    .section-content {
+      padding: 0 $space-md $space-md $space-md;
+      
+      .progress-stats {
+        display: flex;
+        flex-direction: column;
+        gap: $space-sm;
+
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          gap: $space-xs;
+          font-size: 0.8rem;
+          color: $text-muted;
+
+          .mini-bar {
+            height: 4px;
+            background-color: $bg-primary;
+            border-radius: $radius-sm;
+            overflow: hidden;
+
+            .fill {
+              height: 100%;
+              background-color: $accent-green;
+            }
+          }
+        }
+      }
+
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: $space-xs;
+        font-family: $font-mono;
+        font-size: 0.85rem;
+        color: $text-primary;
+
+        .move-row {
+          padding: $space-xs $space-sm;
+          border-radius: $radius-sm;
+          
+          &:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+          }
+        }
+      }
+
+      .captured-grid {
+        display: flex;
+        flex-direction: column;
+        gap: $space-sm;
+
+        .captured-side {
+          display: flex;
+          gap: $space-xs;
+          font-size: 1.5rem;
+          min-height: 24px;
+        }
+      }
+    }
+  }
+}

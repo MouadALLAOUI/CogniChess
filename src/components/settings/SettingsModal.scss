@@ -1,0 +1,183 @@
+.settings-modal {
+  width: 100%;
+  max-width: 500px;
+  background-color: $bg-modal;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+
+  .modal-header {
+    padding: $space-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+
+    h3 {
+      font-size: 1.25rem;
+      color: $text-primary;
+    }
+
+    .close-btn {
+      color: $text-muted;
+      font-size: 1.5rem;
+      &:hover { color: white; }
+    }
+  }
+
+  .modal-body {
+    padding: $space-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xl;
+
+    .settings-section {
+      h4 {
+        margin-bottom: $space-md;
+        font-size: 0.8rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .theme-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: $space-md;
+
+        .theme-card {
+          @include card-surface;
+          padding: $space-sm;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: $space-sm;
+          cursor: pointer;
+          position: relative;
+          transition: $transition-base;
+          border: 2px solid $border-color;
+
+          &:hover {
+            border-color: lighten($border-color, 15%);
+          }
+
+          &.active {
+            border-color: $accent-gold;
+            background-color: rgba($accent-gold, 0.05);
+
+            .label {
+              color: $accent-gold;
+              font-weight: 600;
+            }
+          }
+
+          .preview-board {
+            width: 80px;
+            height: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            border-radius: $radius-sm;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+          }
+
+          .preview-pieces {
+            width: 80px;
+            height: 80px;
+            @include flex-center;
+            gap: $space-xs;
+            font-size: 2rem;
+            background-color: $bg-primary;
+            border-radius: $radius-sm;
+          }
+
+          .label {
+            font-size: 0.9rem;
+            color: $text-muted;
+          }
+
+          .check-icon {
+            position: absolute;
+            top: $space-xs;
+            right: $space-xs;
+            color: $accent-gold;
+            font-size: 0.8rem;
+          }
+        }
+      }
+
+      .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .label-with-icon {
+          display: flex;
+          align-items: center;
+          gap: $space-md;
+          font-weight: 600;
+          color: $text-primary;
+
+          svg {
+            width: 20px;
+            color: $text-muted;
+          }
+        }
+
+        .toggle-btn {
+          width: 48px;
+          height: 24px;
+          border-radius: 12px;
+          background-color: $bg-primary;
+          border: 1px solid $border-color;
+          position: relative;
+          transition: $transition-base;
+
+          .toggle-thumb {
+            width: 18px;
+            height: 18px;
+            background-color: $text-muted;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: $transition-base;
+          }
+
+          &.on {
+            background-color: rgba($accent-green, 0.2);
+            border-color: $accent-green;
+            .toggle-thumb {
+              background-color: $accent-green;
+              left: 26px;
+            }
+          }
+        }
+      }
+
+      &.danger-zone {
+        padding-top: $space-md;
+        border-top: 1px solid $border-color;
+
+        .reset-btn {
+          @include flex-center;
+          width: 100%;
+          gap: $space-md;
+          padding: $space-md;
+          background-color: rgba($danger, 0.1);
+          color: $danger;
+          border: 1px solid rgba($danger, 0.2);
+          border-radius: $radius-md;
+          font-weight: 600;
+
+          &:hover {
+            background-color: $danger;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}

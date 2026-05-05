@@ -1,0 +1,115 @@
+.clone-card {
+  @include card-surface;
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  transition: transform $transition-base, border-color $transition-base;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: lighten($border-color, 15%);
+  }
+
+  &__avatar {
+    @include flex-center;
+    width: 64px;
+    height: 64px;
+    background-color: $bg-primary;
+    border-radius: $radius-lg;
+    font-size: 2.5rem;
+    border: 1px solid $border-color;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+
+    .clone-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    .maturity-section {
+      .label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: $text-muted;
+        margin-bottom: $space-xs;
+      }
+
+      .progress-bar {
+        height: 6px;
+        background-color: $bg-primary;
+        border-radius: $radius-sm;
+        overflow: hidden;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, $accent-green, lighten($accent-green, 15%));
+          border-radius: $radius-sm;
+          transition: width 1s ease-out;
+        }
+      }
+    }
+
+    .games-played {
+      display: flex;
+      align-items: center;
+      gap: $space-xs;
+
+      .count {
+        font-family: $font-mono;
+        color: $accent-gold;
+        font-weight: 600;
+      }
+
+      .label {
+        font-size: 0.8rem;
+        color: $text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-sm;
+
+    .action-btn {
+      @include flex-center;
+      gap: $space-xs;
+      padding: $space-sm;
+      border-radius: $radius-md;
+      font-size: 0.9rem;
+      font-weight: 500;
+
+      &.train {
+        background-color: rgba($accent-green, 0.1);
+        color: $accent-green;
+        border: 1px solid rgba($accent-green, 0.2);
+
+        &:hover {
+          background-color: $accent-green;
+          color: white;
+        }
+      }
+
+      &.challenge {
+        background-color: rgba($accent-gold, 0.1);
+        color: $accent-gold;
+        border: 1px solid rgba($accent-gold, 0.2);
+
+        &:hover {
+          background-color: $accent-gold;
+          color: white;
+        }
+      }
+    }
+  }
+}

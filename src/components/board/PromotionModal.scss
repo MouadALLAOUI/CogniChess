@@ -1,0 +1,38 @@
+.promotion-modal {
+  background-color: $bg-modal;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  h3 {
+    margin-bottom: $space-lg;
+    color: $text-primary;
+    font-size: 1.1rem;
+  }
+
+  .promotion-options {
+    display: flex;
+    gap: $space-md;
+
+    .promo-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: $radius-md;
+      background-color: $bg-primary;
+      border: 1px solid $border-color;
+      font-size: 1.5rem;
+      color: $text-primary;
+      transition: $transition-base;
+
+      &:hover {
+        border-color: $accent-gold;
+        background-color: rgba($accent-gold, 0.1);
+      }
+
+      &.w { color: white; }
+      &.b { color: #888; }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+.game-over-modal {
+  width: 100%;
+  max-width: 360px;
+  background-color: $bg-modal;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  text-align: center;
+
+  .modal-body {
+    padding: $space-xl;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+
+    .result-title {
+      font-size: 2rem;
+      color: $accent-gold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .winner-text {
+      font-size: 1.1rem;
+      color: $text-primary;
+      margin-bottom: $space-md;
+    }
+
+    .footer-stats {
+      font-size: 0.85rem;
+      color: $text-muted;
+      font-style: italic;
+      margin-bottom: $space-lg;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: $space-sm;
+
+      .action-btn {
+        @include flex-center;
+        gap: $space-md;
+        padding: $space-md;
+        border-radius: $radius-md;
+        font-weight: 600;
+        transition: $transition-base;
+
+        &.restart {
+          background-color: $accent-green;
+          color: white;
+
+          &:hover {
+            background-color: darken($accent-green, 5%);
+          }
+        }
+
+        &.home {
+          background-color: transparent;
+          color: $text-muted;
+          border: 1px solid $border-color;
+
+          &:hover {
+            background-color: $bg-primary;
+            color: $text-primary;
+            border-color: $text-muted;
+          }
+        }
+      }
+    }
+  }
+}

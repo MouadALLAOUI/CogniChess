@@ -1,0 +1,101 @@
+.add-bot-modal {
+  width: 100%;
+  max-width: 400px;
+  background-color: $bg-modal;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+
+  .modal-header {
+    padding: $space-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid $border-color;
+
+    h3 {
+      font-size: 1.25rem;
+      color: $text-primary;
+    }
+
+    .close-btn {
+      color: $text-muted;
+      font-size: 1.5rem;
+      &:hover { color: white; }
+    }
+  }
+
+  .modal-body {
+    padding: $space-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $space-sm;
+
+      label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: $text-muted;
+      }
+
+      input {
+        background-color: $bg-primary;
+        border: 1px solid $border-color;
+        border-radius: $radius-md;
+        padding: $space-md;
+        color: $text-primary;
+        font-family: inherit;
+        outline: none;
+
+        &:focus {
+          border-color: $accent-gold;
+        }
+      }
+
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $space-sm;
+
+        .emoji-btn {
+          @include flex-center;
+          height: 60px;
+          background-color: $bg-primary;
+          border: 1px solid $border-color;
+          border-radius: $radius-md;
+          font-size: 1.5rem;
+          transition: $transition-base;
+
+          &.active {
+            border-color: $accent-gold;
+            background-color: rgba($accent-gold, 0.1);
+          }
+
+          &:hover:not(.active) {
+            border-color: lighten($border-color, 20%);
+          }
+        }
+      }
+    }
+
+    .create-btn {
+      @include flex-center;
+      gap: $space-sm;
+      background-color: $accent-green;
+      color: white;
+      padding: $space-md;
+      border-radius: $radius-md;
+      font-weight: 600;
+      margin-top: $space-md;
+
+      &:hover {
+        background-color: darken($accent-green, 5%);
+      }
+    }
+  }
+}

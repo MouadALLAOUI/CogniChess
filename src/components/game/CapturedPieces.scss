@@ -1,0 +1,49 @@
+.captured-pieces {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-primary;
+
+    svg {
+      color: $accent-gold;
+    }
+
+    .advantage-count {
+      margin-left: auto;
+      font-family: $font-mono;
+      color: $accent-green;
+      font-weight: 700;
+    }
+  }
+
+  .captured-rows {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+
+    .captured-row {
+      display: flex;
+      flex-wrap: wrap;
+      min-height: 24px;
+      gap: 2px;
+      padding: $space-xs $space-sm;
+      background-color: rgba(255, 255, 255, 0.02);
+      border-radius: $radius-sm;
+
+      .captured-piece {
+        font-size: 1.25rem;
+        line-height: 1;
+        
+        &.white { color: white; }
+        &.black { color: #888; }
+      }
+    }
+  }
+}
