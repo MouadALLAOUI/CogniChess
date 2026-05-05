@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-labelledby="title-bR desc-bR">
+  <title id="title-bR">Black Rook - Wooden Style</title>
+  <desc id="desc-bR">A carved walnut chess rook piece with dark wood grain texture.</desc>
+  <defs>
+    <linearGradient id="woodDarkGrad-bR" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#5d4037"/>
+      <stop offset="40%" stop-color="#4e342e"/>
+      <stop offset="60%" stop-color="#3e2723"/>
+      <stop offset="100%" stop-color="#2d1b16"/>
+    </linearGradient>
+    <linearGradient id="woodDarkShadow-bR" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3e2723"/>
+      <stop offset="100%" stop-color="#1a0f0a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="85" r="18" fill="url(#woodDarkShadow-bR)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M35,80 L35,50 L30,50 L30,30 L40,30 L40,20 L60,20 L60,30 L70,30 L70,50 L65,50 L65,80 Z" fill="url(#woodDarkGrad-bR)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="38" y="40" width="24" height="8" rx="1" fill="url(#woodDarkShadow-bR)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M45,60 Q50,63 55,60" fill="none" stroke="#5d4037" stroke-width="0.5" opacity="0.4"/>
+</svg>

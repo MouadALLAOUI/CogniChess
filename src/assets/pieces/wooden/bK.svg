@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-labelledby="title-bK desc-bK">
+  <title id="title-bK">Black King - Wooden Style</title>
+  <desc id="desc-bK">A carved walnut chess king piece with dark wood grain texture.</desc>
+  <defs>
+    <linearGradient id="woodDarkGrad-bK" x1="10%" y1="0%" x2="90%" y2="100%">
+      <stop offset="0%" stop-color="#5d4037"/>
+      <stop offset="40%" stop-color="#4e342e"/>
+      <stop offset="60%" stop-color="#3e2723"/>
+      <stop offset="100%" stop-color="#2d1b16"/>
+    </linearGradient>
+    <linearGradient id="woodDarkShadow-bK" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3e2723"/>
+      <stop offset="100%" stop-color="#1a0f0a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="85" r="18" fill="url(#woodDarkShadow-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="35" y="80" width="30" height="8" rx="2" fill="url(#woodDarkGrad-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M40,80 L42,55 Q42,45 50,45 Q58,45 58,55 L60,80 Z" fill="url(#woodDarkGrad-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="38" y="52" width="24" height="6" rx="1" fill="url(#woodDarkShadow-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="50" cy="35" r="12" fill="url(#woodDarkGrad-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="47" y="15" width="6" height="14" fill="url(#woodDarkGrad-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <rect x="41" y="20" width="18" height="6" rx="2" fill="url(#woodDarkGrad-bK)" stroke="#1a0f0a" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M45,65 Q50,68 55,65" fill="none" stroke="#5d4037" stroke-width="0.5" opacity="0.4"/>
+  <path d="M44,72 Q50,75 56,72" fill="none" stroke="#5d4037" stroke-width="0.5" opacity="0.4"/>
+</svg>
