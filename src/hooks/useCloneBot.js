@@ -4,7 +4,7 @@ import { boardToFen } from '../engine/fenParser';
 import { getLegalMoves } from '../engine/moveValidator';
 import { COLORS } from '../engine/chessRules';
 
-export const useCloneBot = (board, turn, gameStatus, bot, onMove, playerColor) => {
+export const useCloneBot = (board, turn, gameStatus, bot, onMove, playerColor, learningEnabled = true) => {
   const [lastBotDecision, setLastBotDecision] = useState(null);
   const [isThinking, setIsThinking] = useState(false);
 
@@ -41,5 +41,5 @@ export const useCloneBot = (board, turn, gameStatus, bot, onMove, playerColor) =
     }
   }, [turn, gameStatus, bot, board, onMove, playerColor]);
 
-  return { lastBotDecision, isThinking };
+  return { lastBotDecision, isThinking, learningEnabled };
 };

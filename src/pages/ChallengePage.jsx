@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Board from '../components/board/Board';
-import Sidebar from '../components/layout/Sidebar';
 import MoveHistory from '../components/game/MoveHistory';
 import CapturedPieces from '../components/game/CapturedPieces';
 import GameControls from '../components/game/GameControls';
@@ -13,6 +12,8 @@ import { useChessGame } from '../hooks/useChessGame';
 import { useCloneBot } from '../hooks/useCloneBot';
 import { useTheme } from '../hooks/useTheme';
 import './ChallengePage.scss';
+
+const LEARNING_ENABLED = false;
 
 const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) => {
   const {
@@ -42,16 +43,17 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
     executeMove({ ...move, isBot: true });
   }, [executeMove]);
 
-  const { lastBotDecision, isThinking } = useCloneBot(
+  const { lastBotDecision, isThinking, learningEnabled } = useCloneBot(
     board,
     turn,
     gameStatus,
     bot,
     handleBotMove,
-    playerColor
+    playerColor,
+    LEARNING_ENABLED
   );
 
-  // Update bot stats at end of game
+  // Update bot stats at end of game (no learning in Challenge mode)
   useEffect(() => {
     if ((gameStatus === 'checkmate' || gameStatus === 'stalemate') && !gameCompletedRef.current) {
       gameCompletedRef.current = true;
@@ -64,6 +66,7 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
         updatedBot.draws += 1;
       }
 
+      // No style profile recomputation in Challenge mode
       onUpdateBot(updatedBot);
     }
 
@@ -83,9 +86,24 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
   const getEndGameStats = () => {
     if (!history.length) return "";
     const botMoves = history.filter(m => m.turn === 'b').length;
-    // In a real scenario, we'd track source per move, for now we can estimate or show total
-    return `${bot.name} analyzed ${botMoves} positions during this match.`;
+    
+    // Analyze moves by source (memory, opening, style)
+    const memoryMoves = history.filter(m => m.source === 'memory').length;
+    const openingMoves = history.filter(m => m.source === 'opening').length;
+    const styleMoves = history.filter(m => m.source === 'style').length;
+    
+    return `${bot.name} analyzed ${botMoves} positions. Memory: ${memoryMoves}, Opening: ${openingMoves}, Style: ${styleMoves}`;
   };
+
+  // Calculate estimated ELO based on games played and win rate
+  const estimatedElo = React.useMemo(() => {
+    if (bot.gamesPlayed === 0) return 'Unrated';
+    const winRate = bot.wins / bot.gamesPlayed;
+    const baseElo = 800;
+    const eloGain = Math.min(400, bot.gamesPlayed * 10);
+    const eloFromWins = Math.round(winRate * 400);
+    return baseElo + eloGain + eloFromWins;
+  }, [bot.gamesPlayed, bot.wins]);
 
   return (
     <div className="challenge-page">
@@ -93,13 +111,20 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
         <div className="game-area">
           <div className="game-area-header">
             <button className="back-btn" onClick={onBack}>← Back to Home</button>
-            <div className="challenge-info">Challenging: <strong>{bot.name}</strong></div>
+            <div className="challenge-info">
+              <span className="mode-badge challenge-badge">⚔️ Challenge Mode</span>
+              <strong>{bot.name}</strong>
+              {estimatedElo !== 'Unrated' && (
+                <span className="elo-rating">ELO: ~{estimatedElo}</span>
+              )}
+            </div>
           </div>
 
           <CloneInsight
             decision={lastBotDecision}
             isThinking={isThinking}
             botName={bot.name}
+            showExplanation={false}
           />
 
           <Board
@@ -119,18 +144,19 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
         </div>
 
         <aside className="game-sidebar">
-          <div className="sidebar-top">
+          <div className="sidebar-section">
             <CapturedPieces captured={capturedPieces} />
           </div>
-          <div className="sidebar-middle">
+          <div className="sidebar-section sidebar-middle">
             <MoveHistory history={history} />
           </div>
-          <div className="sidebar-bottom">
+          <div className="sidebar-section sidebar-bottom">
             <GameControls
               onUndo={undoMove}
               onNewGame={resetGame}
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
+              onExportPGN={() => {}}
             />
             <PGNModal
               history={history}

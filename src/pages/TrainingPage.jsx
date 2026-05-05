@@ -28,6 +28,8 @@ import { detectBlunder } from '../clone/blunderDetector';
 import { computeAccuracy, findBestMove, findBiggestMistake, generateHeatmapData } from '../utils/gameAnalysis';
 import './TrainingPage.scss';
 
+const LEARNING_ENABLED = true;
+
 const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) => {
   const {
     board,
@@ -74,13 +76,14 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
     executeMove({ ...move, isBot: true });
   }, [executeMove]);
 
-  const { lastBotDecision, isThinking } = useCloneBot(
+  const { lastBotDecision, isThinking, learningEnabled } = useCloneBot(
     board,
     turn,
     gameStatus,
     bot,
     handleBotMove,
-    playerColor
+    playerColor,
+    LEARNING_ENABLED
   );
 
   // Store clone's recommended move for blunder detection
@@ -92,7 +95,7 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
 
   // Blunder detection after player moves
   useEffect(() => {
-    if (turn !== playerColor && lastMove && !lastMove.isBot && cloneRecommendedMove) {
+    if (turn !== playerColor && lastMove && !lastMove.isBot && cloneRecommendedMove && LEARNING_ENABLED) {
       const moveKey = `${lastMove.from}-${lastMove.to}-${history.length}`;
       if (lastRecordedMoveRef.current === moveKey) return;
       lastRecordedMoveRef.current = moveKey;
@@ -113,7 +116,7 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         setBlunder(blunderResult);
       }
 
-      // Learning logic
+      // Learning logic - only in Training mode
       const moveData = {
         moveNumber: Math.ceil(history.length / 2),
         phase: getGamePhase(board, Math.ceil(history.length / 2)),
@@ -130,7 +133,7 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
       const updatedBot = recordMove(bot, moveData);
       onUpdateBot(updatedBot);
     }
-  }, [turn, lastMove, history, bot, onUpdateBot, board, gameStatus]);
+  }, [turn, lastMove, history, bot, onUpdateBot, board, gameStatus, cloneRecommendedMove]);
 
   // Effect to handle end of game learning
   useEffect(() => {
@@ -146,10 +149,13 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         updatedBot.draws += 1;
       }
 
-      const historyData = updatedBot.cloneData.moveHistory;
-      updatedBot.cloneData.styleProfile = computeStyleProfile(historyData);
-      updatedBot.cloneData.openingBook = buildOpeningBook(historyData);
-      updatedBot.cloneData.positionMemory = buildPositionMemory(historyData);
+      // Only rebuild profiles in Training mode (learning enabled)
+      if (LEARNING_ENABLED) {
+        const historyData = updatedBot.cloneData.moveHistory;
+        updatedBot.cloneData.styleProfile = computeStyleProfile(historyData);
+        updatedBot.cloneData.openingBook = buildOpeningBook(historyData);
+        updatedBot.cloneData.positionMemory = buildPositionMemory(historyData);
+      }
 
       onUpdateBot(updatedBot);
     }
@@ -230,19 +236,39 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
     }
   };
 
+  const handleResetCloneMemory = () => {
+    if (!bot) return;
+    const resetBot = {
+      ...bot,
+      gamesPlayed: 0,
+      wins: 0, losses: 0, draws: 0,
+      cloneData: {
+        openingBook: {},
+        styleProfile: {},
+        positionMemory: {},
+        moveHistory: []
+      }
+    };
+    onUpdateBot(resetBot);
+  };
+
   return (
     <div className="training-page">
       <div className="game-layout">
         <div className="game-area">
           <div className="game-area-header">
             <button className="back-btn" onClick={onBack}>← Back to Home</button>
-            <div className="training-info">Training: <strong>{bot.name}</strong></div>
+            <div className="training-info">
+              <span className="mode-badge learning-badge">🎓 Learning Mode</span>
+              <strong>{bot.name}</strong>
+            </div>
           </div>
 
           <CloneInsight
             decision={lastBotDecision}
             isThinking={isThinking}
             botName={bot.name}
+            showExplanation={true}
           />
 
           <Board
@@ -271,22 +297,22 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         </div>
 
         <aside className="game-sidebar">
-          <div className="sidebar-top">
+          <div className="sidebar-section">
             <CloneProgress gamesPlayed={bot.gamesPlayed} />
           </div>
-          <div className="sidebar-top">
+          <div className="sidebar-section">
             <StyleDNA 
               styleProfile={bot.cloneData?.styleProfile || {}} 
               gamesPlayed={bot.gamesPlayed} 
             />
           </div>
-          <div className="sidebar-top">
+          <div className="sidebar-section">
             <CapturedPieces captured={capturedPieces} />
           </div>
-          <div className="sidebar-middle">
+          <div className="sidebar-section sidebar-middle">
             <MoveHistory history={history} />
           </div>
-          <div className="sidebar-bottom">
+          <div className="sidebar-section sidebar-bottom">
             <GameControls
               onUndo={undoMove}
               onNewGame={resetGame}
@@ -296,6 +322,13 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
               onToggleAnnotation={(mode) => setAnnotationMode(mode)}
               annotationMode={annotationMode}
             />
+            <button 
+              className="action-btn reset-clone-btn"
+              onClick={handleResetCloneMemory}
+              title="Reset all clone learning data"
+            >
+              🗑️ Reset Clone Memory
+            </button>
           </div>
         </aside>
       </div>
