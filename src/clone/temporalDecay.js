@@ -59,10 +59,10 @@ function logarithmicDecay(ageInDays) {
 
 /**
  * Apply temporal weights to position memory entries
- * @param {Array} memoryEntries - Array of {position, move, count, timestamp} objects
+ * @param {Object|Array} memoryEntries - Position memory (object: {fen: move} or array: [{position, move, count, timestamp}])
  * @param {string} decayType 
  * @param {number} halfLife 
- * @returns {Array} - Entries with added weight property
+ * @returns {Object|Array} - Entries with added weight properties
  */
 export function applyTemporalWeightsToMemory(
   memoryEntries,
@@ -71,21 +71,52 @@ export function applyTemporalWeightsToMemory(
 ) {
   const currentTime = Date.now();
   
-  return memoryEntries.map(entry => ({
-    ...entry,
-    temporalWeight: calculateTemporalWeight(
-      entry.timestamp || currentTime,
-      currentTime,
-      decayType,
-      halfLife
-    ),
-    weightedCount: (entry.count || 1) * calculateTemporalWeight(
-      entry.timestamp || currentTime,
-      currentTime,
-      decayType,
-      halfLife
-    )
-  }));
+  // Handle object format: { fen: move } or { fen: { move, count, timestamp } }
+  if (memoryEntries && typeof memoryEntries === 'object' && !Array.isArray(memoryEntries)) {
+    const weightedMemory = {};
+    
+    for (const [fen, entry] of Object.entries(memoryEntries)) {
+      // If entry is a simple string (move), just copy it
+      if (typeof entry === 'string') {
+        weightedMemory[fen] = entry;
+        continue;
+      }
+      
+      // If entry is an object with timestamp, add weights
+      const timestamp = entry.timestamp || currentTime;
+      const weight = calculateTemporalWeight(timestamp, currentTime, decayType, halfLife);
+      
+      weightedMemory[fen] = {
+        ...entry,
+        temporalWeight: weight,
+        weightedCount: (entry.count || 1) * weight
+      };
+    }
+    
+    return weightedMemory;
+  }
+  
+  // Handle array format: [{ position, move, count, timestamp }]
+  if (Array.isArray(memoryEntries)) {
+    return memoryEntries.map(entry => ({
+      ...entry,
+      temporalWeight: calculateTemporalWeight(
+        entry.timestamp || currentTime,
+        currentTime,
+        decayType,
+        halfLife
+      ),
+      weightedCount: (entry.count || 1) * calculateTemporalWeight(
+        entry.timestamp || currentTime,
+        currentTime,
+        decayType,
+        halfLife
+      )
+    }));
+  }
+  
+  // Fallback: return empty object if invalid input
+  return {};
 }
 
 /**
@@ -144,20 +175,49 @@ export function getRecencyBiasFactor(gamesPlayed, recentGames) {
 
 /**
  * Decay old position memory entries below threshold
- * @param {Array} memoryEntries 
+ * @param {Object|Array} memoryEntries - Position memory (object or array)
  * @param {number} minWeight - Minimum weight to keep entry
- * @returns {Array} - Filtered entries
+ * @returns {Object|Array} - Filtered entries
  */
 export function pruneOldMemories(memoryEntries, minWeight = 0.1) {
   const currentTime = Date.now();
   
-  return memoryEntries.filter(entry => {
-    const weight = calculateTemporalWeight(
-      entry.timestamp || currentTime,
-      currentTime
-    );
-    return weight >= minWeight;
-  });
+  // Handle object format
+  if (memoryEntries && typeof memoryEntries === 'object' && !Array.isArray(memoryEntries)) {
+    const filteredMemory = {};
+    
+    for (const [fen, entry] of Object.entries(memoryEntries)) {
+      // If entry is a simple string, keep it (no timestamp to check)
+      if (typeof entry === 'string') {
+        filteredMemory[fen] = entry;
+        continue;
+      }
+      
+      // If entry is an object, check its weight
+      const timestamp = entry.timestamp || currentTime;
+      const weight = calculateTemporalWeight(timestamp, currentTime);
+      
+      if (weight >= minWeight) {
+        filteredMemory[fen] = entry;
+      }
+    }
+    
+    return filteredMemory;
+  }
+  
+  // Handle array format
+  if (Array.isArray(memoryEntries)) {
+    return memoryEntries.filter(entry => {
+      const weight = calculateTemporalWeight(
+        entry.timestamp || currentTime,
+        currentTime
+      );
+      return weight >= minWeight;
+    });
+  }
+  
+  // Fallback: return empty object
+  return {};
 }
 
 /**
