@@ -37,6 +37,14 @@
   user-select: none;
   transition: background-color $transition-fast;
 
+  &[draggable="true"] {
+    cursor: grab;
+    
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
   &.light {
     background-color: $board-classic-light;
 
@@ -124,6 +132,11 @@
     &:hover {
       transform: scale(1.1);
     }
+
+    &.dragging {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
   }
 
   &:hover {
@@ -138,4 +151,14 @@
       z-index: 1;
     }
   }
+}
+
+.move-arrow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
 }
