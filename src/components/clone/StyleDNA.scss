@@ -1,0 +1,49 @@
+.style-dna {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  &__header {
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: #888;
+  }
+
+  &__chart {
+    height: 250px;
+    margin-bottom: 16px;
+  }
+
+  &__legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  &__legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+}
