@@ -6,21 +6,26 @@
 import { getMemoryMove, getTopKFuzzyMoves } from './positionMemory';
 import { getOpeningMove } from './openingBook';
 import { coordsToSquare, moveToSAN } from '../engine/algebraicNotation';
+import { calculateTemporalWeight, applyTemporalWeightsToMemory } from './temporalDecay';
+import { styleToEmbedding, MoveScorer } from './neuralStyleEmbedding';
 
 export const decideMove = (board, fen, legalMoves, cloneData, gamesPlayed) => {
   if (legalMoves.length === 0) return null;
 
+  // Apply temporal decay to position memory for recent game weighting
+  const weightedMemory = applyTemporalWeightsToMemory(cloneData.positionMemory);
+  
   // Layer 3: Position Memory (Requires at least 10 games for confidence)
   if (gamesPlayed >= 10) {
-    // 3a. Exact match
-    const memoryMoveStr = getMemoryMove(cloneData.positionMemory, fen);
+    // 3a. Exact match with temporal weighting
+    const memoryMoveStr = getMemoryMove(weightedMemory, fen);
     if (memoryMoveStr) {
       const move = findMoveBySAN(board, legalMoves, memoryMoveStr);
       if (move) return { ...move, label: 'memory' };
     }
 
     // 3b. Fuzzy match (Top-K with style blending)
-    const fuzzyMatches = getTopKFuzzyMoves(cloneData.positionMemory, fen, 0.85, 3);
+    const fuzzyMatches = getTopKFuzzyMoves(weightedMemory, fen, 0.85, 3);
     if (fuzzyMatches.length > 0) {
       const bestFuzzyMove = blendFuzzyWithStyle(board, legalMoves, fuzzyMatches, cloneData.styleProfile);
       if (bestFuzzyMove) {
@@ -42,8 +47,8 @@ export const decideMove = (board, fen, legalMoves, cloneData, gamesPlayed) => {
     }
   }
 
-  // Layer 2: Style Weighted Move
-  const weightedMove = styleWeightedMove(board, legalMoves, cloneData.styleProfile);
+  // Layer 2: Style Weighted Move (with neural scoring if available)
+  const weightedMove = scoreMovesWithNeuralNetwork(board, legalMoves, cloneData, gamesPlayed);
   return { ...weightedMove, label: 'style' };
 };
 
@@ -52,6 +57,60 @@ const styleWeightedMove = (board, legalMoves, styleProfile) => {
   // Sort by score descending and pick the best one
   scoredMoves.sort((a, b) => b.score - a.score);
   return scoredMoves[0].move;
+};
+
+/**
+ * Enhanced move scoring using neural network-style embedding
+ */
+const scoreMovesWithNeuralNetwork = (board, legalMoves, cloneData, gamesPlayed) => {
+  // Use neural scoring for experienced bots (20+ games)
+  if (gamesPlayed >= 20 && cloneData.styleProfile) {
+    try {
+      const styleEmbedding = styleToEmbedding(cloneData.styleProfile);
+      const moveScorer = new MoveScorer();
+      
+      const scoredMoves = legalMoves.map(move => {
+        const positionFeatures = extractPositionFeatures(move, board);
+        const score = moveScorer.scoreMove(move, styleEmbedding, board, positionFeatures);
+        return { move, score: score * 10 }; // Scale to match existing scoring range
+      });
+      
+      scoredMoves.sort((a, b) => b.score - a.score);
+      return scoredMoves[0].move;
+    } catch (error) {
+      console.warn('Neural scoring failed, falling back to heuristic scoring:', error);
+    }
+  }
+  
+  // Fallback to traditional style-weighted scoring
+  return styleWeightedMove(board, legalMoves, cloneData.styleProfile);
+};
+
+/**
+ * Extract position features for neural scoring
+ */
+const extractPositionFeatures = (move, board) => {
+  const [tr, tc] = move.to;
+  const [fr, fc] = move.from;
+  const piece = board[fr][fc];
+  const targetPiece = board[tr][tc];
+  const toStr = coordsToSquare(tr, tc);
+  
+  return {
+    threatensCapture: !!targetPiece,
+    improvesKingSafety: move.castling || false,
+    improvesMobility: true, // Simplified
+    improvesPawnStructure: piece?.toLowerCase() === 'p',
+    coordinatesWithPieces: false, // Would need deeper analysis
+    developsPiece: ['n', 'b'].includes(piece?.toLowerCase()),
+    simplifiesWhenAhead: false, // Would need material evaluation
+    followsOpeningPrinciples: isCenterSquare(toStr) || ['n', 'b'].includes(piece?.toLowerCase())
+  };
+};
+
+const isCenterSquare = (square) => {
+  const centerSquares = ['d4', 'd5', 'e4', 'e5'];
+  return centerSquares.includes(square);
 };
 
 /**
