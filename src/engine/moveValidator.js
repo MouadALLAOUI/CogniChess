@@ -69,6 +69,11 @@ export const simulateMove = (board, move) => {
     newBoard[toR][3] = rook;
     newBoard[toR][0] = null;
   }
+  
+  // Handle promotion in simulation
+  if (move.promotion) {
+    newBoard[toR][toC] = piece[0] + move.promotion.toUpperCase();
+  }
 
   return newBoard;
 };

@@ -144,6 +144,8 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
         result={gameStatus === 'checkmate' ? 'Checkmate' : 'Stalemate'}
         winner={gameStatus === 'checkmate' ? (turn === 'w' ? 'Black' : 'White') : null}
         footerText={getEndGameStats()}
+        onRestart={resetGame}
+        onHome={onBack}
       />
     </div>
   );

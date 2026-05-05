@@ -134,22 +134,66 @@ const getKingMoves = (board, r, c, color, gameState, moves) => {
     }
   }
 
-  // Castling
+  // Castling - must verify: king not in check, path clear, path not attacked
   if (!gameState.inCheck) {
     const castling = gameState.castling[color];
-    if (castling.kingside) {
-      const row = color === COLORS.WHITE ? 7 : 0;
-      if (!board[row][5] && !board[row][6]) {
+    const row = color === COLORS.WHITE ? 7 : 0;
+    const opponentColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
+    
+    // Kingside castling
+    if (castling.kingside && !board[row][5] && !board[row][6]) {
+      // Verify squares e, f, g are not under attack
+      let pathSafe = true;
+      for (let col = 4; col <= 6; col++) {
+        const testBoard = board.map(r => [...r]);
+        testBoard[row][col] = color + 'K';
+        const tempGameState = { ...gameState, inCheck: false };
+        if (isSquareAttacked(testBoard, row, col, opponentColor, tempGameState)) {
+          pathSafe = false;
+          break;
+        }
+      }
+      if (pathSafe) {
         moves.push({ from: [r, c], to: [row, 6], type: 'castleKingside' });
       }
     }
-    if (castling.queenside) {
-      const row = color === COLORS.WHITE ? 7 : 0;
-      if (!board[row][1] && !board[row][2] && !board[row][3]) {
+    
+    // Queenside castling
+    if (castling.queenside && !board[row][1] && !board[row][2] && !board[row][3]) {
+      // Verify squares e, d, c are not under attack (b doesn't matter for king path)
+      let pathSafe = true;
+      for (let col of [4, 3, 2]) {
+        const testBoard = board.map(r => [...r]);
+        testBoard[row][col] = color + 'K';
+        const tempGameState = { ...gameState, inCheck: false };
+        if (isSquareAttacked(testBoard, row, col, opponentColor, tempGameState)) {
+          pathSafe = false;
+          break;
+        }
+      }
+      if (pathSafe) {
         moves.push({ from: [r, c], to: [row, 2], type: 'castleQueenside' });
       }
     }
   }
+};
+
+/**
+ * Checks if a square is attacked by any piece of the given color.
+ */
+const isSquareAttacked = (board, r, c, attackerColor, gameState) => {
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      const piece = board[i][j];
+      if (piece && piece[0] === attackerColor) {
+        const moves = getPseudoLegalMoves(board, i, j, gameState);
+        if (moves.some(m => m.to[0] === r && m.to[1] === c)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
 };
 
 export const isWithinBoard = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;

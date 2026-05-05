@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRotateLeft, faHouse } from '@fortawesome/free-solid-svg-icons';
 import './GameOverModal.scss';
 
-const GameOverModal = ({ isOpen, result, winner, footerText }) => {
+const GameOverModal = ({ isOpen, result, winner, footerText, onRestart, onHome }) => {
   if (!isOpen) return null;
 
   return (
@@ -16,11 +16,11 @@ const GameOverModal = ({ isOpen, result, winner, footerText }) => {
           {footerText && <p className="footer-stats">{footerText}</p>}
 
           <div className="modal-actions">
-            <button className="action-btn restart">
+            <button className="action-btn restart" onClick={onRestart}>
               <FontAwesomeIcon icon={faRotateLeft} />
               <span>Play Again</span>
             </button>
-            <button className="action-btn home">
+            <button className="action-btn home" onClick={onHome}>
               <FontAwesomeIcon icon={faHouse} />
               <span>Home</span>
             </button>
