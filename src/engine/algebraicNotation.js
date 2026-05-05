@@ -51,3 +51,7 @@ export const squareToCoords = (square) => {
 export const coordsToSquare = (r, c) => {
   return String.fromCharCode(97 + c) + (8 - r);
 };
+
+// Aliases for backwards compatibility
+export const algebraicToCoords = squareToCoords;
+export const coordsToAlgebraic = coordsToSquare;

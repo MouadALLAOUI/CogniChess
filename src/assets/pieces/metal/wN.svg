@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-labelledby="title-wN desc-wN">
+  <title id="title-wN">White Knight - Metal Style</title>
+  <desc id="desc-wN">A machined steel chess knight piece with metallic highlights.</desc>
+  <defs>
+    <linearGradient id="metalGrad-wN" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="20%" stop-color="#e0e0e0"/><stop offset="50%" stop-color="#b0b0b0"/><stop offset="55%" stop-color="#ffffff"/><stop offset="100%" stop-color="#808080"/></linearGradient>
+    <linearGradient id="metalDarkGrad-wN" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#a0a0a0"/><stop offset="100%" stop-color="#606060"/></linearGradient>
+  </defs>
+  <circle cx="50" cy="85" r="18" fill="url(#metalDarkGrad-wN)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <path d="M35,80 L40,55 Q35,40 45,30 Q50,20 65,25 L68,35 Q55,35 55,45 Q65,50 65,60 L60,80 Z" fill="url(#metalGrad-wN)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="58" cy="35" r="2" fill="#555555" opacity="0.6"/>
+  <rect x="38" y="52" width="20" height="6" rx="1" fill="url(#metalDarkGrad-wN)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="45" cy="65" r="1.5" fill="#ffffff" opacity="0.4"/>
+</svg>

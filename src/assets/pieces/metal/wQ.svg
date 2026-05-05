@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-labelledby="title-wQ desc-wQ">
+  <title id="title-wQ">White Queen - Metal Style</title>
+  <desc id="desc-wQ">A machined steel chess queen piece with metallic highlights.</desc>
+  <defs>
+    <linearGradient id="metalGrad-wQ" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="20%" stop-color="#e0e0e0"/><stop offset="50%" stop-color="#b0b0b0"/><stop offset="55%" stop-color="#ffffff"/><stop offset="100%" stop-color="#808080"/>
+    </linearGradient>
+    <linearGradient id="metalDarkGrad-wQ" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#a0a0a0"/><stop offset="100%" stop-color="#606060"/>
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="85" r="18" fill="url(#metalDarkGrad-wQ)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="35" y="80" width="30" height="8" rx="2" fill="url(#metalGrad-wQ)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <path d="M35,80 L40,50 L30,30 L40,35 L50,15 L60,35 L70,30 L60,50 L65,80 Z" fill="url(#metalGrad-wQ)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="50" cy="12" r="4" fill="url(#metalGrad-wQ)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <rect x="38" y="48" width="24" height="5" rx="1" fill="url(#metalDarkGrad-wQ)" stroke="#555555" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="42" cy="60" r="1.5" fill="#ffffff" opacity="0.4"/>
+</svg>
