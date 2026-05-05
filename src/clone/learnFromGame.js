@@ -3,7 +3,9 @@
  * Records every move made by the player to build the learning dataset.
  */
 
-export const recordMove = (bot, moveData) => {
+const MAX_MOVE_HISTORY_SIZE = 1000;
+
+export const recordMove = (bot, moveData, maxHistorySize = MAX_MOVE_HISTORY_SIZE) => {
   const updatedBot = { ...bot };
   
   if (!updatedBot.cloneData) {
@@ -20,6 +22,12 @@ export const recordMove = (bot, moveData) => {
     ...moveData,
     timestamp: Date.now()
   });
+
+  // Prune old entries if exceeding limit to prevent localStorage overflow
+  if (updatedBot.cloneData.moveHistory.length > maxHistorySize) {
+    updatedBot.cloneData.moveHistory = 
+      updatedBot.cloneData.moveHistory.slice(-maxHistorySize);
+  }
 
   return updatedBot;
 };

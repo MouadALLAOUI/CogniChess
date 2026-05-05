@@ -19,6 +19,8 @@ export const useChessGame = () => {
   });
   const [enPassant, setEnPassant] = useState(null);
   const [pendingPromotion, setPendingPromotion] = useState(null);
+  // State stack for undo functionality (keeps last 50 states)
+  const [stateStack, setStateStack] = useState([]);
 
   const resetGame = useCallback(() => {
     setPlayerColor(prev => prev === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE);
@@ -36,6 +38,7 @@ export const useChessGame = () => {
     });
     setEnPassant(null);
     setPendingPromotion(null);
+    setStateStack([]);
   }, []);
 
   const selectPiece = useCallback((r, c) => {
@@ -64,6 +67,19 @@ export const useChessGame = () => {
       setPendingPromotion(move);
       return;
     }
+
+    // Save current state for undo (keep last 50 states)
+    setStateStack(prev => [...prev.slice(-49), {
+      board: JSON.parse(JSON.stringify(board)),
+      turn,
+      castling: { ...castling },
+      enPassant: enPassant ? [...enPassant] : null,
+      capturedPieces: JSON.parse(JSON.stringify(capturedPieces)),
+      history: [...history],
+      gameStatus,
+      lastMove,
+      pendingPromotion
+    }]);
 
     const newBoard = simulateMove(board, move);
 
@@ -108,7 +124,7 @@ export const useChessGame = () => {
     setLastMove({ ...move, capturedPiece: captured || (move.type === 'enPassant' ? (piece[0] === COLORS.WHITE ? 'bP' : 'wP') : null) });
     setSelectedSquare(null);
     setLegalMoves([]);
-  }, [board, turn, castling]);
+  }, [board, turn, castling, enPassant, capturedPieces, history, gameStatus, lastMove, pendingPromotion]);
 
   const promotePawn = useCallback((promotionPiece) => {
     if (!pendingPromotion) return;
@@ -118,32 +134,59 @@ export const useChessGame = () => {
     const [toR, toC] = moveWithPromotion.to;
     const piece = board[fromR][fromC];
 
+    // Save current state for undo before promotion
+    setStateStack(prev => [...prev.slice(-49), {
+      board: JSON.parse(JSON.stringify(board)),
+      turn,
+      castling: { ...castling },
+      enPassant: enPassant ? [...enPassant] : null,
+      capturedPieces: JSON.parse(JSON.stringify(capturedPieces)),
+      history: [...history],
+      gameStatus,
+      lastMove,
+      pendingPromotion
+    }]);
+
     const newBoard = simulateMove(board, moveWithPromotion);
     newBoard[toR][toC] = piece[0] + promotionPiece.toUpperCase();
 
-    // Re-use logic from executeMove but with promotion
+    // Update castling rights (pawn promotion doesn't affect castling, but be explicit)
+    const newCastling = { ...castling };
+
     const nextTurn = turn === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
-    const nextStatus = getGameState(newBoard, nextTurn, { turn: nextTurn, castling, enPassant: null });
+    const nextStatus = getGameState(newBoard, nextTurn, { turn: nextTurn, castling: newCastling, enPassant: null });
     const moveNotation = moveToSAN(board, moveWithPromotion, nextStatus === 'check', nextStatus === 'checkmate');
 
     setHistory(prev => [...prev, { notation: moveNotation, turn }]);
     setBoard(newBoard);
     setTurn(nextTurn);
+    setCastling(newCastling);
     setEnPassant(null);
     setGameStatus(nextStatus);
     setLastMove(moveWithPromotion);
     setPendingPromotion(null);
     setSelectedSquare(null);
     setLegalMoves([]);
-  }, [board, turn, castling, pendingPromotion]);
+  }, [board, turn, castling, enPassant, capturedPieces, history, gameStatus, lastMove, pendingPromotion]);
 
   const undoMove = useCallback(() => {
-    // Basic undo (could be improved with a full state stack)
-    if (history.length === 0) return;
-    // For now, let's just reset to initial state if we want simple undo, 
-    // but ideally we'd store states in history.
-    // Simplifying for now: only allow reset or one-step undo if we add state stack.
-  }, [history]);
+    if (stateStack.length === 0) return;
+    
+    const previousState = stateStack[stateStack.length - 1];
+    setStateStack(prev => prev.slice(0, -1));
+    
+    setBoard(previousState.board);
+    setTurn(previousState.turn);
+    setCastling(previousState.castling);
+    setEnPassant(previousState.enPassant);
+    setCapturedPieces(previousState.capturedPieces);
+    setHistory(previousState.history);
+    setGameStatus(previousState.gameStatus);
+    setLastMove(previousState.lastMove);
+    setPendingPromotion(previousState.pendingPromotion);
+    setSelectedSquare(null);
+    setLegalMoves([]);
+  }, [stateStack]);
 
   return {
     board,

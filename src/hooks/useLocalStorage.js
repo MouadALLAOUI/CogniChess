@@ -23,7 +23,12 @@ export const useLocalStorage = (key, defaultValue) => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
-      console.error(`Error saving ${key} to localStorage:`, e);
+      if (e.name === 'QuotaExceededError') {
+        console.warn(`localStorage quota exceeded for ${key}. Consider clearing old data.`);
+        // Optionally notify user or implement fallback storage strategy
+      } else {
+        console.error(`Error saving ${key} to localStorage:`, e);
+      }
     }
   }, [key, value]);
 

@@ -185,6 +185,8 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         isOpen={gameStatus === 'checkmate' || gameStatus === 'stalemate'}
         result={gameStatus === 'checkmate' ? 'Checkmate' : 'Stalemate'}
         winner={gameStatus === 'checkmate' ? (turn === 'w' ? 'Black' : 'White') : null}
+        onRestart={resetGame}
+        onHome={onBack}
       />
     </div>
   );
