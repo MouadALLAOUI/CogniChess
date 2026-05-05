@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheck, faVolumeHigh, faVolumeXmark, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useTheme } from '../../hooks/useTheme';
+import soundManager from '../../utils/soundManager';
 import './SettingsModal.scss';
 
 const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot }) => {
@@ -18,6 +19,21 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
       onResetBot();
     }
   };
+
+  const handleVolumeChange = (e) => {
+    const volume = parseFloat(e.target.value);
+    updateSetting('soundVolume', volume);
+    soundManager.setVolume(volume);
+  };
+
+  // Initialize sound manager on first open
+  React.useEffect(() => {
+    if (isOpen) {
+      soundManager.init();
+      soundManager.setEnabled(settings.soundEnabled);
+      soundManager.setVolume(settings.soundVolume);
+    }
+  }, [isOpen]);
 
   return (
     <div className="modal-overlay animate-fade-in">
@@ -83,7 +99,40 @@ const SettingsModal = ({ isOpen, onClose, settings, onSettingsChange, onResetBot
               </div>
               <button 
                 className={`toggle-btn ${settings.soundEnabled ? 'on' : 'off'}`}
-                onClick={() => updateSetting('soundEnabled', !settings.soundEnabled)}
+                onClick={() => {
+                  const newValue = !settings.soundEnabled;
+                  updateSetting('soundEnabled', newValue);
+                  soundManager.setEnabled(newValue);
+                }}
+              >
+                <div className="toggle-thumb"></div>
+              </button>
+            </div>
+            
+            <div className="setting-row volume-control">
+              <label htmlFor="volume-slider">Volume</label>
+              <input
+                id="volume-slider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={settings.soundVolume}
+                onChange={handleVolumeChange}
+                disabled={!settings.soundEnabled}
+              />
+              <span className="volume-value">{Math.round(settings.soundVolume * 100)}%</span>
+            </div>
+          </section>
+
+          <section className="settings-section">
+            <div className="setting-row">
+              <div className="label-with-icon">
+                <span>Show Board Coordinates</span>
+              </div>
+              <button 
+                className={`toggle-btn ${settings.showCoordinates ? 'on' : 'off'}`}
+                onClick={() => updateSetting('showCoordinates', !settings.showCoordinates)}
               >
                 <div className="toggle-thumb"></div>
               </button>

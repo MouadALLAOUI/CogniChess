@@ -149,6 +149,8 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
             boardTheme={boardTheme}
             pieceTheme={pieceTheme}
             isFlipped={isFlipped}
+            showCoordinates={settings.showCoordinates}
+            moveArrow={lastMove ? { from: lastMove.from, to: lastMove.to } : null}
           />
         </div>
 
