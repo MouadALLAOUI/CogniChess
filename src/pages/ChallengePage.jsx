@@ -7,6 +7,8 @@ import GameControls from '../components/game/GameControls';
 import PromotionModal from '../components/board/PromotionModal';
 import GameOverModal from '../components/game/GameOverModal';
 import CloneInsight from '../components/clone/CloneInsight';
+import PGNModal from '../components/game/PGNModal';
+import { exportToPGN, downloadPGN } from '../utils/pgnManager';
 import { useChessGame } from '../hooks/useChessGame';
 import { useCloneBot } from '../hooks/useCloneBot';
 import { useTheme } from '../hooks/useTheme';
@@ -28,7 +30,8 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
     promotePawn,
     undoMove,
     resetGame,
-    playerColor
+    playerColor,
+    gameMode
   } = useChessGame();
 
   const isFlipped = playerColor === 'b';
@@ -128,6 +131,11 @@ const ChallengePage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange })
               onNewGame={resetGame}
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
+            />
+            <PGNExport 
+              history={history} 
+              playerColor={playerColor} 
+              bot={bot} 
             />
           </div>
         </aside>

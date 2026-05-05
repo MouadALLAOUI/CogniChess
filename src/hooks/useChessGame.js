@@ -2,8 +2,11 @@ import { useState, useCallback, useEffect } from 'react';
 import { createInitialBoard, COLORS } from '../engine/chessRules';
 import { getLegalMoves, getGameState, simulateMove, isInCheck } from '../engine/moveValidator';
 import { moveToSAN } from '../engine/algebraicNotation';
+import { createChess960Board } from '../utils/chess960';
+import { triggerHaptic } from '../utils/haptics';
 
 export const useChessGame = () => {
+  const [gameMode, setGameMode] = useState('standard'); // 'standard' or 'chess960'
   const [playerColor, setPlayerColor] = useState(COLORS.WHITE);
   const [board, setBoard] = useState(createInitialBoard());
   const [turn, setTurn] = useState(COLORS.WHITE);
@@ -22,9 +25,10 @@ export const useChessGame = () => {
   // State stack for undo functionality (keeps last 50 states)
   const [stateStack, setStateStack] = useState([]);
 
-  const resetGame = useCallback(() => {
+  const resetGame = useCallback((mode = gameMode) => {
     setPlayerColor(prev => prev === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE);
-    setBoard(createInitialBoard());
+    setGameMode(mode);
+    setBoard(mode === 'chess960' ? createChess960Board() : createInitialBoard());
     setTurn(COLORS.WHITE);
     setSelectedSquare(null);
     setLegalMoves([]);
@@ -39,7 +43,7 @@ export const useChessGame = () => {
     setEnPassant(null);
     setPendingPromotion(null);
     setStateStack([]);
-  }, []);
+  }, [gameMode]);
 
   const selectPiece = useCallback((r, c) => {
     if (gameStatus === 'checkmate' || gameStatus === 'stalemate') return;
@@ -89,12 +93,16 @@ export const useChessGame = () => {
         ...prev,
         [captured[0]]: [...prev[captured[0]], captured]
       }));
+      triggerHaptic('capture');
     } else if (move.type === 'enPassant') {
       const epCaptured = piece[0] === COLORS.WHITE ? 'bP' : 'wP';
       setCapturedPieces(prev => ({
         ...prev,
         [epCaptured[0]]: [...prev[epCaptured[0]], epCaptured]
       }));
+      triggerHaptic('capture');
+    } else {
+      triggerHaptic('move');
     }
 
     // Update castling rights
@@ -105,6 +113,11 @@ export const useChessGame = () => {
     if (piece === 'wR' && fromC === 7) newCastling.w.kingside = false;
     if (piece === 'bR' && fromC === 0) newCastling.b.queenside = false;
     if (piece === 'bR' && fromC === 7) newCastling.b.kingside = false;
+
+    // Handle castling move haptic
+    if (move.type === 'castleKingside' || move.type === 'castleQueenside') {
+      triggerHaptic('castle');
+    }
 
     // Update en passant
     const newEnPassant = move.type === 'doublePawnPush' ? [(fromR + toR) / 2, fromC] : null;
@@ -124,6 +137,13 @@ export const useChessGame = () => {
     setLastMove({ ...move, capturedPiece: captured || (move.type === 'enPassant' ? (piece[0] === COLORS.WHITE ? 'bP' : 'wP') : null) });
     setSelectedSquare(null);
     setLegalMoves([]);
+
+    // Trigger check/gameover haptics
+    if (nextStatus === 'check') {
+      triggerHaptic('check');
+    } else if (nextStatus === 'checkmate' || nextStatus === 'stalemate') {
+      triggerHaptic('gameover');
+    }
   }, [board, turn, castling, enPassant, capturedPieces, history, gameStatus, lastMove, pendingPromotion]);
 
   const promotePawn = useCallback((promotionPiece) => {
@@ -203,6 +223,7 @@ export const useChessGame = () => {
     promotePawn,
     undoMove,
     resetGame,
-    playerColor
+    playerColor,
+    gameMode
   };
 };

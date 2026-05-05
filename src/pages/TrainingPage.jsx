@@ -6,6 +6,7 @@ import CapturedPieces from '../components/game/CapturedPieces';
 import GameControls from '../components/game/GameControls';
 import PromotionModal from '../components/board/PromotionModal';
 import GameOverModal from '../components/game/GameOverModal';
+import PGNModal from '../components/game/PGNModal';
 import CloneInsight from '../components/clone/CloneInsight';
 import CloneProgress from '../components/clone/CloneProgress';
 import { useChessGame } from '../hooks/useChessGame';
@@ -17,6 +18,7 @@ import { buildPositionMemory } from '../clone/positionMemory';
 import { boardToFen } from '../engine/fenParser';
 import { getGamePhase } from '../engine/gamePhase';
 import { coordsToSquare } from '../engine/algebraicNotation';
+import { exportToPGN, downloadPGN } from '../utils/pgnManager';
 import { useTheme } from '../hooks/useTheme';
 import './TrainingPage.scss';
 
@@ -36,10 +38,12 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
     promotePawn,
     undoMove,
     resetGame,
-    playerColor
+    playerColor,
+    gameMode
   } = useChessGame();
 
   const [isFlipped, setIsFlipped] = useState(playerColor === 'b');
+  const [isPGNModalOpen, setIsPGNModalOpen] = useState(false);
   const lastRecordedMoveRef = useRef(null);
   const gameCompletedRef = useRef(false);
   const { boardTheme, pieceTheme } = useTheme(settings, onSettingsChange);
@@ -170,6 +174,7 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
               onNewGame={resetGame}
               onResign={onBack}
               onFlipBoard={() => setIsFlipped(!isFlipped)}
+              onExportPGN={() => setIsPGNModalOpen(true)}
             />
           </div>
         </aside>
@@ -187,6 +192,18 @@ const TrainingPage = ({ bot, onBack, onUpdateBot, settings, onSettingsChange }) 
         winner={gameStatus === 'checkmate' ? (turn === 'w' ? 'Black' : 'White') : null}
         onRestart={resetGame}
         onHome={onBack}
+      />
+
+      <PGNModal
+        isOpen={isPGNModalOpen}
+        onClose={() => setIsPGNModalOpen(false)}
+        pgnData={exportToPGN(history, gameStatus, 'Player', bot?.name || 'Bot')}
+        onExport={() => downloadPGN(exportToPGN(history, gameStatus, 'Player', bot?.name || 'Bot'))}
+        onImport={(pgnText) => {
+          // Import logic can be added here
+          console.log('Import PGN:', pgnText);
+          return true;
+        }}
       />
     </div>
   );
